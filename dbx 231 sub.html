@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DBX 231s Style MP3 Player</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:
+        radial-gradient(circle at 50% 0%,#3a3a3a,#151515 55%,#050505);
+    font-family:Arial,Helvetica,sans-serif;
+    color:#eee;
+}
+
+.rack{
+    width:min(1200px,98vw);
+    background:#171717;
+    border:2px solid #050505;
+    border-radius:4px;
+    padding:14px;
+    box-shadow:
+        0 25px 60px #000,
+        inset 0 1px #555;
+}
+
+.top{
+    height:72px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:0 18px;
+    background:linear-gradient(#303030,#151515);
+    border-bottom:2px solid #080808;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.desc{
+    font-size:8px;
+    color:#aaa;
+    letter-spacing:2px;
+}
+
+.model{
+    font-size:25px;
+    font-weight:bold;
+}
+
+.power{
+    margin-left:auto;
+    font-size:10px;
+}
+
+.lamp{
+    display:inline-block;
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#ddd;
+    box-shadow:0 0 8px #fff;
+    margin-right:5px;
+}
+
+.panel{
+    margin-top:10px;
+    padding:10px;
+    background:linear-gradient(#292929,#151515);
+    border:1px solid #070707;
+    box-shadow:inset 0 1px #444;
+}
+
+.title{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:9px;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+.eq{
+    display:grid;
+    grid-template-columns:repeat(31,1fr);
+    gap:3px;
+    padding:9px 5px;
+    background:#090909;
+    border:1px solid #000;
+}
+
+.band{
+    height:355px;
+    position:relative;
+    display:flex;
+    justify-content:center;
+}
+
+.band label{
+    position:absolute;
+    top:0;
+    font-size:7px;
+    color:#ddd;
+}
+
+.track{
+    position:absolute;
+    top:30px;
+    bottom:30px;
+    width:5px;
+    background:linear-gradient(
+        90deg,
+        #222,
+        #aaa,
+        #222
+    );
+    border-radius:2px;
+}
+
+.track::before{
+    content:"";
+    position:absolute;
+    left:-5px;
+    right:-5px;
+    top:50%;
+    border-top:1px solid #eee;
+}
+
+.knob{
+    position:absolute;
+    left:50%;
+    width:24px;
+    height:11px;
+    transform:translate(-50%,-50%);
+    background:linear-gradient(
+        #eee,
+        #777 40%,
+        #222 65%,
+        #aaa
+    );
+    border:1px solid #111;
+    border-radius:2px;
+    box-shadow:0 2px 3px #000;
+    pointer-events:none;
+}
+
+.slider{
+    position:absolute;
+    top:20px;
+    bottom:20px;
+    width:28px;
+    opacity:0;
+    cursor:pointer;
+    z-index:5;
+}
+
+.value{
+    position:absolute;
+    bottom:4px;
+    font-size:8px;
+    color:#aaa;
+}
+
+.type{
+    position:absolute;
+    top:15px;
+    font-size:6px;
+    color:#666;
+    writing-mode:vertical-rl;
+}
+
+.meters{
+    display:flex;
+    gap:12px;
+    margin-top:8px;
+}
+
+.meterbox{
+    flex:1;
+    padding:6px;
+    background:#070707;
+    border:1px solid #000;
+}
+
+.meterlabel{
+    font-size:8px;
+    color:#aaa;
+    margin-bottom:4px;
+}
+
+.meter{
+    display:flex;
+    height:9px;
+    gap:2px;
+}
+
+.meter i{
+    flex:1;
+    background:#383838;
+}
+
+.meter i.on{
+    background:#ddd;
+    box-shadow:0 0 5px #ccc;
+}
+
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:9px;
+}
+
+button,
+.fileButton{
+    padding:9px 14px;
+    color:#eee;
+    font-weight:bold;
+    cursor:pointer;
+    background:linear-gradient(#4a4a4a,#1b1b1b);
+    border:1px solid #050505;
+    border-radius:3px;
+    box-shadow:
+        inset 0 1px #777,
+        0 2px 3px #000;
+}
+
+button:active,
+.fileButton:active{
+    transform:translateY(1px);
+}
+
+input[type=file]{
+    display:none;
+}
+
+.filename{
+    flex:1;
+    min-width:150px;
+    color:#aaa;
+    font-size:11px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.master{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:9px;
+}
+
+.master input{
+    width:120px;
+}
+
+.note{
+    margin-top:9px;
+    text-align:center;
+    color:#777;
+    font-size:9px;
+}
+
+@media(max-width:850px){
+
+    .eq{
+        grid-template-columns:repeat(16,1fr);
+    }
+
+}
+
+@media(max-width:520px){
+
+    .eq{
+        grid-template-columns:repeat(8,1fr);
+    }
+
+    .band{
+        height:250px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="rack">
+
+    <div class="top">
+
+        <div>
+            <div class="logo">dbx</div>
+            <div class="desc">PROFESSIONAL PRODUCTS</div>
+        </div>
+
+        <div class="model">231s</div>
+
+        <div class="power">
+            <span class="lamp"></span>
+            POWER
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="title">
+            <span>GRAPHIC EQUALIZER — DUAL CHANNEL</span>
+            <span>±15 dB</span>
+        </div>
+
+        <div class="eq" id="eq"></div>
+
+
+        <div class="meters">
+
+            <div class="meterbox">
+                <div class="meterlabel">
+                    CHANNEL A — LEVEL
+                </div>
+
+                <div class="meter" id="meterA"></div>
+            </div>
+
+
+            <div class="meterbox">
+                <div class="meterlabel">
+                    CHANNEL B — LEVEL
+                </div>
+
+                <div class="meter" id="meterB"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel">
+
+        <div class="title">
+            <span>MP3 PLAYER</span>
+            <span id="status">STOPPED</span>
+        </div>
+
+
+        <div class="controls">
+
+            <label class="fileButton">
+
+                PILIH MP3
+
+                <input
+                    id="file"
+                    type="file"
+                    accept="audio/*">
+
+            </label>
+
+
+            <button id="play">
+                ▶ PLAY
+            </button>
+
+
+            <button id="pause">
+                Ⅱ PAUSE
+            </button>
+
+
+            <button id="stop">
+                ■ STOP
+            </button>
+
+
+            <div
+                class="filename"
+                id="filename">
+
+                Belum ada file
+
+            </div>
+
+
+            <label class="master">
+
+                MASTER
+
+                <input
+                    id="volume"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.8">
+
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <div class="note">
+        BASS • MID • TREBLE — EQ BERFUNGSI LANGSUNG PADA AUDIO
+    </div>
+
+
+    <audio id="audio"></audio>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   DAFTAR FADER
+========================================= */
+
+const bands = [
+
+    ["20","bass"],
+    ["25","bass"],
+    ["31.5","bass"],
+    ["40","bass"],
+    ["50","bass"],
+    ["63","bass"],
+    ["80","bass"],
+    ["100","bass"],
+    ["125","bass"],
+    ["160","bass"],
+
+    ["200","mid"],
+    ["250","mid"],
+    ["315","mid"],
+    ["400","mid"],
+    ["500","mid"],
+    ["630","mid"],
+    ["800","mid"],
+    ["1k","mid"],
+    ["1.25k","mid"],
+    ["1.6k","mid"],
+    ["2k","mid"],
+    ["2.5k","mid"],
+    ["3.15k","mid"],
+
+    ["4k","treble"],
+    ["5k","treble"],
+    ["6.3k","treble"],
+    ["8k","treble"],
+    ["10k","treble"],
+    ["12.5k","treble"],
+    ["16k","treble"],
+    ["20k","treble"]
+
+];
+
+
+const eq = document.getElementById("eq");
+
+
+/* =========================================
+   MEMBUAT SEMUA FADER
+========================================= */
+
+bands.forEach((band,index)=>{
+
+    const div = document.createElement("div");
+
+    div.className = "band";
+
+    div.innerHTML = `
+
+        <label>${band[0]}</label>
+
+        <div class="track"></div>
+
+        <div
+            class="knob"
+            id="knob${index}"
+            style="top:50%">
+        </div>
+
+        <input
+            class="slider"
+            id="slider${index}"
+            type="range"
+            min="-15"
+            max="15"
+            value="0"
+            step="1"
+            data-type="${band[1]}"
+            data-index="${index}">
+
+        <span class="type">
+            ${band[1]}
+        </span>
+
+        <span
+            class="value"
+            id="value${index}">
+            0
+        </span>
+
+    `;
+
+    eq.appendChild(div);
+
+});
+
+
+/* =========================================
+   AUDIO ENGINE
+========================================= */
+
+const audio =
+    document.getElementById("audio");
+
+let audioContext = null;
+
+let source = null;
+
+let bassFilter = null;
+let midFilter = null;
+let trebleFilter = null;
+
+let audioInitialized = false;
+
+
+/* =========================================
+   MEMBUAT FILTER AUDIO
+========================================= */
+
+function initializeAudio(){
+
+    if(audioInitialized){
+        return;
+    }
+
+
+    audioContext =
+        new (window.AudioContext ||
+             window.webkitAudioContext)();
+
+
+    source =
+        audioContext.createMediaElementSource(audio);
+
+
+    /*
+        BASS
+        20Hz - sekitar 200Hz
+    */
+
+    bassFilter =
+        audioContext.createBiquadFilter();
+
+    bassFilter.type = "lowshelf";
+
+    bassFilter.frequency.value = 150;
+
+    bassFilter.gain.value = 0;
+
+
+    /*
+        MID
+        sekitar 1kHz
+    */
+
+    midFilter =
+        audioContext.createBiquadFilter();
+
+    midFilter.type = "peaking";
+
+    midFilter.frequency.value = 1000;
+
+    midFilter.Q.value = 0.8;
+
+    midFilter.gain.value = 0;
+
+
+    /*
+        TREBLE
+        sekitar 4kHz ke atas
+    */
+
+    trebleFilter =
+        audioContext.createBiquadFilter();
+
+    trebleFilter.type = "highshelf";
+
+    trebleFilter.frequency.value = 4000;
+
+    trebleFilter.gain.value = 0;
+
+
+    /*
+        JALUR AUDIO
+
+        MP3
+          ↓
+        BASS
+          ↓
+        MID
+          ↓
+        TREBLE
+          ↓
+        SPEAKER
+    */
+
+    source
+        .connect(bassFilter)
+        .connect(midFilter)
+        .connect(trebleFilter)
+        .connect(audioContext.destination);
+
+
+    audioInitialized = true;
+
+}
+
+
+/* =========================================
+   FADER AUDIO
+========================================= */
+
+document
+.querySelectorAll(".slider")
+.forEach(slider=>{
+
+    slider.addEventListener(
+        "input",
+        function(){
+
+            const value =
+                Number(this.value);
+
+            const type =
+                this.dataset.type;
+
+            const index =
+                this.dataset.index;
+
+
+            /*
+                UPDATE TAMPILAN
+            */
+
+            document
+                .getElementById(
+                    "value"+index
+                )
+                .textContent =
+                    value > 0
+                    ? "+" + value
+                    : value;
+
+
+            /*
+                GERAKAN KNOB
+            */
+
+            const position =
+                50 -
+                (value / 15) * 43;
+
+
+            document
+                .getElementById(
+                    "knob"+index
+                )
+                .style.top =
+                    position + "%";
+
+
+            /*
+                UPDATE AUDIO
+            */
+
+            if(!audioInitialized){
+                return;
+            }
+
+
+            if(type === "bass"){
+
+                bassFilter.gain.value =
+                    value;
+
+            }
+
+
+            if(type === "mid"){
+
+                midFilter.gain.value =
+                    value;
+
+            }
+
+
+            if(type === "treble"){
+
+                trebleFilter.gain.value =
+                    value;
+
+            }
+
+        }
+
+    );
+
+});
+
+
+/* =========================================
+   FILE MP3
+========================================= */
+
+const file =
+    document.getElementById("file");
+
+const filename =
+    document.getElementById("filename");
+
+const status =
+    document.getElementById("status");
+
+
+file.addEventListener(
+    "change",
+    function(){
+
+        if(!this.files[0]){
+            return;
+        }
+
+
+        const selectedFile =
+            this.files[0];
+
+
+        audio.src =
+            URL.createObjectURL(
+                selectedFile
+            );
+
+
+        filename.textContent =
+            selectedFile.name;
+
+
+        status.textContent =
+            "READY";
+
+
+        initializeAudio();
+
+    }
+);
+
+
+/* =========================================
+   PLAY
+========================================= */
+
+document
+.getElementById("play")
+.addEventListener(
+    "click",
+    async function(){
+
+        if(!audio.src){
+
+            status.textContent =
+                "PILIH MP3 DULU";
+
+            return;
+        }
+
+
+        initializeAudio();
+
+
+        if(audioContext.state === "suspended"){
+
+            await audioContext.resume();
+
+        }
+
+
+        try{
+
+            await audio.play();
+
+            status.textContent =
+                "PLAYING";
+
+        }
+
+        catch(error){
+
+            status.textContent =
+                "GAGAL MEMUTAR";
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   PAUSE
+========================================= */
+
+document
+.getElementById("pause")
+.onclick = function(){
+
+    audio.pause();
+
+    status.textContent =
+        "PAUSED";
+
+};
+
+
+/* =========================================
+   STOP
+========================================= */
+
+document
+.getElementById("stop")
+.onclick = function(){
+
+    audio.pause();
+
+    audio.currentTime = 0;
+
+    status.textContent =
+        "STOPPED";
+
+};
+
+
+audio.addEventListener(
+    "ended",
+    function(){
+
+        status.textContent =
+            "STOPPED";
+
+    }
+);
+
+
+/* =========================================
+   MASTER VOLUME
+========================================= */
+
+const volume =
+    document.getElementById("volume");
+
+
+volume.addEventListener(
+    "input",
+    function(){
+
+        audio.volume =
+            Number(this.value);
+
+    }
+);
+
+
+audio.volume = 0.8;
+
+
+/* =========================================
+   LED LEVEL METER
+========================================= */
+
+function createMeter(id){
+
+    const meter =
+        document.getElementById(id);
+
+
+    for(let i=0;i<18;i++){
+
+        const led =
+            document.createElement("i");
+
+        meter.appendChild(led);
+
+    }
+
+}
+
+
+createMeter("meterA");
+createMeter("meterB");
+
+
+/* =========================================
+   ANIMASI LEVEL METER
+========================================= */
+
+setInterval(function(){
+
+    const playing =
+        !audio.paused;
+
+
+    ["meterA","meterB"]
+    .forEach(id=>{
+
+        const leds =
+            document.querySelectorAll(
+                "#" + id + " i"
+            );
+
+
+        const level =
+            playing
+            ? Math.floor(
+                Math.random()*14
+              ) + 3
+            : 0;
+
+
+        leds.forEach(
+            (led,index)=>{
+
+                led.classList.toggle(
+                    "on",
+                    index < level
+                );
+
+            }
+        );
+
+    });
+
+},100);
+
+</script>
+
+</body>
+</html>
